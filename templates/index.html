@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,12 +9,42 @@
 <body>
 
     <div class="container">
-        <h1>База знаний по игре Factorio</h1>
-        <p>Добро пожаловать, инженер!</p>
-        
-        <!-- Тут позже будет форма поиска -->
-        <input type="text" placeholder="Поиск предмета...">
-        <button>Найти</button>
+        <!-- Шапка: Заголовок + Кнопка добавления -->
+        <div class="header-row">
+            <h1>Factorio Knowledge Base</h1>
+            <a href="{{ url_for('add_item') }}" class="btn-add">
+                + Add New Item
+            </a>
+        </div>
+
+        <!-- Форма поиска -->
+        <form action="/" method="GET" class="search-form">
+            <input type="text" name="q" placeholder="Search item..." value="{{ request.args.get('q', '') }}">
+            <button type="submit">Search</button>
+            {% if request.args.get('q') %}
+                <!-- Кнопка сброса поиска -->
+                <a href="{{ url_for('index') }}" style="color: #aaa; margin-left: 10px;">Reset</a>
+            {% endif %}
+        </form>
+
+        <!-- Сетка предметов -->
+        <div class="inventory-category">
+            <h3>Materials and Recipes</h3> 
+            
+            {% if items|length == 0 %}
+                <p style="text-align: center; color: #888;">No items found in database.</p>
+            {% else %}
+                <div class="inventory-grid">
+                    {% for item in items %}
+                        <a href="{{ url_for('wiki_page', item_id=item.id) }}" title="{{ item.name }}">
+                            <div class="item-slot">
+                                <img src="{{ url_for('static', filename='images/' + item.image_filename) }}" alt="{{ item.name }}">
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
     </div>
 
 </body>

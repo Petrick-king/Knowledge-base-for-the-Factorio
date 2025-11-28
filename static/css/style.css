@@ -3,11 +3,34 @@ body {
     color: #e0e0e0;            
     font-family: Arial, sans-serif;
     text-align: center;
-    padding-top: 50px;
+    padding-top: 20px;
+    margin: 0;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: left; 
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #555;
+    padding-bottom: 15px;
 }
 
 h1 {
     color: #ff9f1c; 
+    margin: 0;
+}
+
+.search-form {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 input {
@@ -15,6 +38,7 @@ input {
     width: 300px;
     border-radius: 5px;
     border: none;
+    background-color: #e0e0e0;
 }
 
 button {
@@ -24,8 +48,72 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+    color: #2e2e2e;
 }
 
 button:hover {
     background-color: #e08e0b;
+}
+
+.btn-add {
+    background-color: #5E9D46; 
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    border: 2px solid #3c6b2a;
+    border-radius: 3px;
+    box-shadow: inset 2px 2px 5px rgba(255,255,255,0.2), 2px 2px 5px black;
+    transition: 0.1s;
+    display: inline-block;
+}
+
+.btn-add:hover {
+    background-color: #6fb653;
+}
+
+.btn-add:active {
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
+    transform: translateY(2px);
+}
+
+.inventory-category h3 {
+    color: #ff9f1c;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5px;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); 
+    gap: 5px;
+    padding: 10px;
+    background-color: #3a3a3a; 
+    border: 2px solid #555;
+    box-shadow: inset 0 0 10px #000;
+}
+
+.item-slot {
+    width: 64px;
+    height: 64px;
+    background-color: #8e8e8e; 
+    border: 2px solid #555;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.1s;
+    position: relative; 
+}
+
+.item-slot:hover {
+    background-color: #ff9f1c; 
+    border-color: #fff;
+}
+
+.item-slot img {
+    width: 60px; 
+    height: 60px;
+    image-rendering: pixelated; 
 }
