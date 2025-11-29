@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ item.name }} - Factorio KB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .wiki-header { display: flex; align-items: center; gap: 20px; border-bottom: 2px solid #555; padding-bottom: 20px; margin-bottom: 20px; }
+        .wiki-info { background: #3a3a3a; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .wiki-recipe ul { list-style: none; padding: 0; }
+        .wiki-recipe li { background: #444; margin-bottom: 5px; padding: 5px 10px; display: flex; align-items: center; gap: 10px; width: fit-content; }
+        .btn-edit { background: #007acc; color: white; padding: 5px 15px; text-decoration: none; border-radius: 3px; font-weight: bold; font-size: 0.8em; margin-left: auto; }
+        .btn-edit:hover { background: #005f9e; }
+        .icon-small { width: 32px; height: 32px; image-rendering: pixelated; border: 1px solid #777; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="{{ url_for('index') }}" style="color: #aaa; text-decoration: none;">&larr; Back to Menu</a>
+    
+    <div class="wiki-header">
+        <img src="{{ url_for('static', filename='images/' + item.image_filename) }}" alt="{{ item.name }}" style="width: 128px; image-rendering: pixelated;">
+        <div>
+            <h1>{{ item.name }}</h1>
+            <p style="color: #888;">{{ item.prototype_type }} | Stack: {{ item.stack_size }}</p>
+        </div>
+        <!-- ВОТ ОНА, КНОПКА РЕДАКТИРОВАНИЯ -->
+        <a href="{{ url_for('edit_item', item_id=item.id) }}" class="btn-edit">Edit Item</a>
+    </div>
+
+    <div class="wiki-info">
+        <h3>Description</h3>
+        <p>{{ item.description }}</p>
+        
+        <p><strong>Crafting Time:</strong> {{ item.crafting_time }} sec</p>
+        <p><strong>Produced by:</strong> 
+            {% for machine in item.produced_by %}
+                <span style="background:#555; padding: 2px 5px; margin-right: 5px;">{{ machine }}</span>
+            {% endfor %}
+        </p>
+    </div>
+
+    <div class="wiki-recipe">
+        <h3>Recipe (Ingredients):</h3>
+        {% if item.recipe_ingredients %}
+            <ul>
+                {% for entry in item.recipe_ingredients %}
+                    <li>
+                        <img src="{{ url_for('static', filename='images/' + entry.ingredient.image_filename) }}" class="icon-small">
+                        <strong>{{ entry.amount }} x</strong> 
+                        <a href="{{ url_for('wiki_page', item_id=entry.ingredient.id) }}" style="color: #ff9f1c; text-decoration: none;">
+                            {{ entry.ingredient.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="color: #888;">No recipe (Raw resource or not set).</p>
+        {% endif %}
+    </div>
+
+    <div class="wiki-recipe">
+        <h3>Consumed By (Used In):</h3>
+        {% if item.used_in %}
+            <ul>
+                {% for entry in item.used_in %}
+                    <li>
+                         <!-- entry.product - это тот предмет, который получается в итоге -->
+                        <img src="{{ url_for('static', filename='images/' + entry.product.image_filename) }}" class="icon-small">
+                        <a href="{{ url_for('wiki_page', item_id=entry.product.id) }}" style="color: #ff9f1c; text-decoration: none;">
+                            {{ entry.product.name }}
+                        </a>
+                        (needs {{ entry.amount }})
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="color: #888;">Not used in any known recipes.</p>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

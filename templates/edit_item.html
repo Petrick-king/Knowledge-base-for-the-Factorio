@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit {{ item.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .form-container { max-width: 600px; margin: 0 auto; background: #3a3a3a; padding: 20px; border: 2px solid #555; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; color: #ff9f1c; }
+        input, textarea, select { width: 100%; padding: 8px; box-sizing: border-box; background: #2e2e2e; color: white; border: 1px solid #555; margin-bottom: 5px; }
+        .btn-submit { width: 100%; background: #007acc; border: none; padding: 10px; cursor: pointer; font-weight: bold; margin-top: 20px; color: white;}
+        .btn-submit:hover { background: #005f9e; }
+        .recipe-row { display: flex; gap: 10px; margin-bottom: 5px; }
+        .recipe-row select { flex: 3; }
+        .recipe-row input { flex: 1; }
+        .btn-small { background: #555; color: white; border: none; cursor: pointer; padding: 0 10px; }
+        .btn-add-ing { background: #5E9D46; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Edit Item: {{ item.name }}</h1>
+    
+    <div class="form-container">
+        <form action="{{ url_for('edit_item', item_id=item.id) }}" method="POST" enctype="multipart/form-data">
+            
+            <div class="form-group">
+                <label>Display Name</label>
+                <input type="text" name="name" value="{{ item.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Internal Name</label>
+                <input type="text" name="internal_name" value="{{ item.internal_name }}">
+            </div>
+
+            <div class="form-group">
+                <label>Type</label>
+                <select name="prototype_type">
+                    <option value="item" {% if item.prototype_type == 'item' %}selected{% endif %}>Item</option>
+                    <option value="fluid" {% if item.prototype_type == 'fluid' %}selected{% endif %}>Fluid</option>
+                    <option value="entity" {% if item.prototype_type == 'entity' %}selected{% endif %}>Entity</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3">{{ item.description }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Change Image (Leave empty to keep current)</label>
+                <input type="file" name="image">
+                <small>Current: {{ item.image_filename }}</small>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex:1">
+                    <label>Stack Size</label>
+                    <input type="number" name="stack_size" value="{{ item.stack_size }}">
+                </div>
+                <div class="form-group" style="flex:1">
+                    <label>Time (sec)</label>
+                    <input type="number" step="0.1" name="crafting_time" value="{{ item.crafting_time }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Produced By</label>
+                <!-- Трюк: превращаем список Python обратно в строку через join -->
+                <input type="text" name="produced_by" value="{{ ', '.join(item.produced_by) }}">
+            </div>
+
+            <!-- РЕЦЕПТЫ -->
+            <div class="form-group">
+                <label>Recipe (Ingredients)</label>
+                <div id="recipe-list">
+                    <!-- Цикл выводит уже существующие ингредиенты -->
+                    {% for ingredient_link in item.recipe_ingredients %}
+                    <div class="recipe-row">
+                        <select name="ingredient_id[]" required>
+                            <option value="">Select...</option>
+                            {% for existing in existing_items %}
+                                <option value="{{ existing.id }}" 
+                                    {% if existing.id == ingredient_link.ingredient_id %}selected{% endif %}>
+                                    {{ existing.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <input type="number" name="ingredient_amount[]" placeholder="Qty" step="0.1" value="{{ ingredient_link.amount }}" required>
+                        <button type="button" class="btn-small" onclick="this.parentElement.remove()">X</button>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn-add-ing" onclick="addIngredientRow()">+ Add Ingredient</button>
+            </div>
+
+            <button type="submit" class="btn-submit">Update Item</button>
+        </form>
+        <br>
+        <a href="{{ url_for('wiki_page', item_id=item.id) }}" style="color: #aaa;">Cancel</a>
+    </div>
+</div>
+
+<script>
+    // HTML для списка предметов (чтобы JS мог создавать новые строки)
+    const optionsHTML = `
+        <option value="">Select Ingredient...</option>
+        {% for obj in existing_items %}
+            <option value="{{ obj.id }}">{{ obj.name }}</option>
+        {% endfor %}
+    `;
+
+    function addIngredientRow() {
+        const div = document.createElement('div');
+        div.className = 'recipe-row';
+        div.innerHTML = `
+            <select name="ingredient_id[]" required>${optionsHTML}</select>
+            <input type="number" name="ingredient_amount[]" placeholder="Qty" step="0.1" required>
+            <button type="button" class="btn-small" onclick="this.parentElement.remove()">X</button>
+        `;
+        document.getElementById('recipe-list').appendChild(div);
+    }
+</script>
+
+</body>
+</html>
