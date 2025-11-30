@@ -117,3 +117,74 @@ button:hover {
     height: 60px;
     image-rendering: pixelated; 
 }
+
+/* --- СТИЛИ ДЛЯ ВКЛАДОК --- */
+
+.tabs {
+    background-color: #333; /* Темный фон под вкладками */
+    padding: 10px 10px 0 10px;
+    display: flex;
+    gap: 0; /* В Factorio вкладки часто слипшиеся, но можно поставить 2px */
+    border-bottom: none;
+}
+
+.tab-btn {
+    background-color: #2e2e2e; /* Темный фон неактивной вкладки */
+    border: 2px solid #111;    /* Черная обводка */
+    border-bottom: none;       /* Снизу границы нет */
+    
+    width: 64px;               /* Размер кнопки как в игре */
+    height: 64px;
+    padding: 5px;
+    
+    cursor: pointer;
+    border-radius: 3px 3px 0 0; /* Закругляем верхние углы */
+    transition: 0.1s;
+    
+    /* Центрируем картинку внутри кнопки */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Картинка внутри кнопки */
+.tab-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;        /* Чтобы картинка не сплющилась */
+    image-rendering: pixelated; /* Пиксель-арт должен быть четким */
+    filter: brightness(0.7);    /* Чуть затемняем иконки неактивных вкладок */
+}
+
+.tab-btn:hover {
+    background-color: #ff9f1c; /* Оранжевая подсветка при наведении */
+}
+.tab-btn:hover img {
+    filter: brightness(1);     /* При наведении картинка яркая */
+}
+
+/* АКТИВНАЯ ВКЛАДКА */
+.tab-btn.active {
+    background-color: #8e8e8e; /* Светло-серый фон (как на скрине) */
+    border-color: #111;
+    position: relative;        /* Нужно, чтобы перекрыть линию снизу */
+    z-index: 2;
+}
+
+.tab-btn.active img {
+    filter: brightness(1);     /* Активная иконка всегда яркая */
+}
+
+/* Сетка инвентаря */
+.inventory-grid {
+    border: 2px solid #111;
+    border-top: 5px solid #8e8e8e; /* Верхняя граница цвета активной вкладки */
+    margin-top: 0 !important;
+    background-color: #3a3a3a;
+    position: relative;
+    z-index: 1;
+}
+@keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}

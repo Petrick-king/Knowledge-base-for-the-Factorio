@@ -21,7 +21,7 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True) # Название 
     internal_name = db.Column(db.String(100))                     # Внутр. имя 
-    prototype_type = db.Column(db.String(50), default='item')     # Тип 
+    prototype_type = db.Column(db.String(50), default='logistics')# Тип 
     description = db.Column(db.Text)                              # Описание     
     stack_size = db.Column(db.Integer, default=50)                # Стак
     crafting_time = db.Column(db.Float, default=0.5)              # Время крафта     

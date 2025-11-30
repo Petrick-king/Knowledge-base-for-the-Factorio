@@ -39,9 +39,10 @@
             <div class="form-group">
                 <label>Type</label>
                 <select name="prototype_type">
-                    <option value="item" {% if item.prototype_type == 'item' %}selected{% endif %}>Item</option>
-                    <option value="fluid" {% if item.prototype_type == 'fluid' %}selected{% endif %}>Fluid</option>
-                    <option value="entity" {% if item.prototype_type == 'entity' %}selected{% endif %}>Entity</option>
+                    <option value="logistics" {% if item.category == 'logistics' %}selected{% endif %}>Logistics</option>
+                    <option value="production" {% if item.category == 'production' %}selected{% endif %}>Production</option>
+                    <option value="items" {% if item.category == 'items' %}selected{% endif %}>Items</option>
+                    <option value="combat" {% if item.category == 'combat' %}selected{% endif %}>Combat</option>
                 </select>
             </div>
 
