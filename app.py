@@ -8,8 +8,12 @@ app = Flask(__name__)
 
 # --- 1. НАСТРОЙКИ (CONFIG) ---
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+pg8000://postgres:12345678@localhost/factorio_kb'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db_url = os.environ.get('DATABASE_URL')
+
+if not db_url:
+    db_url = 'postgresql+pg8000://postgres:12345@localhost/factorio_kb'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 
 # Папка для загрузки картинок
 UPLOAD_FOLDER = 'static/images'
@@ -296,6 +300,5 @@ def search_api():
 # --- 3. ЗАПУСК (RUN) ---
 if __name__ == '__main__':
     with app.app_context():
-        # Создаем таблицы, если их еще нет
         db.create_all()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)

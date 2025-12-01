@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build: .             
+    ports:
+      - "5000:5000"      
+    depends_on:
+      - db    
+    restart: on-failure           
+    environment:
+      DATABASE_URL: postgresql+pg8000://postgres:12345678@db:5432/factorio_kb
+
+  db:
+    image: postgres:17   
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_DB: factorio_kb
+    ports:
+      - "5432:5432"      
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  pg_data:
