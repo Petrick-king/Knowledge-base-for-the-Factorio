@@ -11,7 +11,7 @@
     <div class="container">
         <!-- Шапка -->
         <div class="header-row">
-            <h1>Factorio KB</h1>
+            <h1>Factorio Knowledge Base</h1>
             <a href="{{ url_for('add_item') }}" class="btn-add">+ Add Item</a>
         </div>
 
@@ -23,87 +23,102 @@
                 <a href="{{ url_for('index') }}" style="color: #aaa; margin-left: 10px;">Reset</a>
             {% endif %}
         </form>
+        <div class="main-panel">
 
-        <!-- МЕНЮ ВКЛАДОК (TABS) -->
-        <div class="tabs">
-            <!-- Вкладка 1: Логистика -->
-            <button class="tab-btn active" onclick="openTab(event, 'logistics')" title="Logistics">
-                <img src="{{ url_for('static', filename='images/logistics.png') }}" alt="Logistics">
-            </button>
-            
-            <!-- Вкладка 2: Производство -->
-            <button class="tab-btn" onclick="openTab(event, 'production')" title="Production">
-                <img src="{{ url_for('static', filename='images/production.png') }}" alt="Production">
-            </button>
-            
-            <!-- Вкладка 3: Промежуточные (Items) -->
-            <button class="tab-btn" onclick="openTab(event, 'items')" title="Items">
-                <img src="{{ url_for('static', filename='images/intermediate.png') }}" alt="Items">
-            </button>
-            
-            <!-- Вкладка 4: Военные -->
-            <button class="tab-btn" onclick="openTab(event, 'combat')" title="Combat">
-                <img src="{{ url_for('static', filename='images/combat.png') }}" alt="Combat">
-            </button>
-        </div>
-
-        <!-- КОНТЕЙНЕРЫ ДЛЯ КАЖДОЙ КАТЕГОРИИ -->
-        
-        <!-- 1. ЛОГИСТИКА -->
-        <div id="logistics" class="tab-content" style="display: block;"> <!-- display: block значит "показано по умолчанию" -->
-            <div class="inventory-grid">
-                {% for item in items if item.prototype_type == 'logistics' %}
-                    <a href="{{ url_for('wiki_page', item_id=item.id) }}" title="{{ item.name }}">
-                        <div class="item-slot">
-                            <img src="{{ url_for('static', filename='images/' + item.image_filename) }}">
-                        </div>
-                    </a>
-                {% else %}
-                   <p style="color:#777; padding:10px">Empty category</p>
-                {% endfor %}
+            <div class="window-header">
+                Materials and recipes
             </div>
-        </div>
 
-        <!-- 2. ПРОИЗВОДСТВО -->
-        <div id="production" class="tab-content" style="display: none;">
-            <div class="inventory-grid">
-                {% for item in items if item.prototype_type == 'production' %}
-                    <a href="{{ url_for('wiki_page', item_id=item.id) }}" title="{{ item.name }}">
-                        <div class="item-slot">
-                            <img src="{{ url_for('static', filename='images/' + item.image_filename) }}">
-                        </div>
-                    </a>
-                {% else %} <p style="color:#777; padding:10px">Empty category</p> {% endfor %}
+            <!-- МЕНЮ ВКЛАДОК (TABS) -->
+            <div class="tabs">
+                <!-- Вкладка 1: Логистика -->
+                <button class="tab-btn active" onclick="openTab(event, 'logistics')" title="Logistics">
+                    <img src="{{ url_for('static', filename='images/logistics.png') }}" alt="Logistics">
+                </button>
+                
+                <!-- Вкладка 2: Производство -->
+                <button class="tab-btn" onclick="openTab(event, 'production')" title="Production">
+                    <img src="{{ url_for('static', filename='images/production.png') }}" alt="Production">
+                </button>
+                
+                <!-- Вкладка 3: Промежуточные (Items) -->
+                <button class="tab-btn" onclick="openTab(event, 'items')" title="Items">
+                    <img src="{{ url_for('static', filename='images/intermediate.png') }}" alt="Items">
+                </button>
+                
+                <!-- Вкладка 4: Военные -->
+                <button class="tab-btn" onclick="openTab(event, 'combat')" title="Combat">
+                    <img src="{{ url_for('static', filename='images/combat.png') }}" alt="Combat">
+                </button>
             </div>
-        </div>
 
-        <!-- 3. ПРОМЕЖУТОЧНЫЕ -->
-        <div id="items" class="tab-content" style="display: none;">
-            <div class="inventory-grid">
-                {% for item in items if item.prototype_type == 'items' %}
-                    <a href="{{ url_for('wiki_page', item_id=item.id) }}" title="{{ item.name }}">
-                        <div class="item-slot">
-                            <img src="{{ url_for('static', filename='images/' + item.image_filename) }}">
-                        </div>
-                    </a>
-                {% else %} <p style="color:#777; padding:10px">Empty category</p> {% endfor %}
+            <!-- КОНТЕЙНЕРЫ ДЛЯ КАЖДОЙ КАТЕГОРИИ -->
+            
+            <!-- 1. ЛОГИСТИКА -->
+            <div id="logistics" class="tab-content" style="display: block;"> <!-- display: block значит "показано по умолчанию" -->
+                <div class="panel-body">
+                    <div class="inventory-grid">
+                        {% for item in items if item.prototype_type == 'logistics' %}
+                            <a href="{{ url_for('wiki_page', item_id=item.id) }}" title="{{ item.name }}">
+                                <div class="item-slot">
+                                    <img src="{{ url_for('static', filename='images/' + item.image_filename) }}">
+                                </div>
+                            </a>
+                        {% else %}
+                        <p style="color:#777; padding:10px">Empty category</p>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- 4. ВОЕННЫЕ -->
-        <div id="combat" class="tab-content" style="display: none;">
-            <div class="inventory-grid">
-                {% for item in items if item.prototype_type == 'combat' %}
-                    <a href="{{ url_for('wiki_page', item_id=item.id) }}" title="{{ item.name }}">
-                        <div class="item-slot">
-                            <img src="{{ url_for('static', filename='images/' + item.image_filename) }}">
-                        </div>
-                    </a>
-                {% else %} <p style="color:#777; padding:10px">Empty category</p> {% endfor %}
+            <!-- 2. ПРОИЗВОДСТВО -->
+            <div id="production" class="tab-content" style="display: none;">
+                <div class="panel-body">
+                    <div class="inventory-grid">
+                        {% for item in items if item.prototype_type == 'production' %}
+                            <a href="{{ url_for('wiki_page', item_id=item.id) }}" title="{{ item.name }}">
+                                <div class="item-slot">
+                                    <img src="{{ url_for('static', filename='images/' + item.image_filename) }}">
+                                </div>
+                            </a>
+                        {% else %} <p style="color:#777; padding:10px">Empty category</p> {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. ПРОМЕЖУТОЧНЫЕ -->
+            <div id="items" class="tab-content" style="display: none;">
+                <div class="panel-body">
+                    <div class="inventory-grid">
+                        {% for item in items if item.prototype_type == 'items' %}
+                            <a href="{{ url_for('wiki_page', item_id=item.id) }}" title="{{ item.name }}">
+                                <div class="item-slot">
+                                    <img src="{{ url_for('static', filename='images/' + item.image_filename) }}">
+                                </div>
+                            </a>
+                        {% else %} <p style="color:#777; padding:10px">Empty category</p> {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. ВОЕННЫЕ -->
+            <div id="combat" class="tab-content" style="display: none;">
+                <div class="panel-body">
+                    <div class="inventory-grid">
+                        {% for item in items if item.prototype_type == 'combat' %}
+                            <a href="{{ url_for('wiki_page', item_id=item.id) }}" title="{{ item.name }}">
+                                <div class="item-slot">
+                                    <img src="{{ url_for('static', filename='images/' + item.image_filename) }}">
+                                </div>
+                            </a>
+                        {% else %} <p style="color:#777; padding:10px">Empty category</p> {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
 
     </div>
+
 
     <!-- JAVASCRIPT ДЛЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК -->
     <script>

@@ -83,28 +83,38 @@ button:hover {
     padding-bottom: 5px;
 }
 
-.inventory-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); 
-    gap: 5px;
-    padding: 10px;
-    background-color: #3a3a3a; 
-    border: 2px solid #555;
-    box-shadow: inset 0 0 10px #000;
+/* --- ГЛАВНАЯ ПАНЕЛЬ (ЦЕНТРИРОВАНИЕ) --- */
+.main-panel {
+    width: 400px; /* Фиксированная ширина: 4 вкладки по 100px */
+    margin: 0 auto; /* Центрируем панель на странице */
 }
 
+/* 1. Настройка сетки */
+/* --- СЕТКА ПРЕДМЕТОВ (ПОД 32px) --- */
+.inventory-grid {
+    display: grid;
+    /* Ячейки будут ~40px шириной */
+    grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); 
+    gap: 3px; 
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* 2. Настройка самой ячейки */
 .item-slot {
-    width: 64px;
-    height: 64px;
+    width: 38px;
+    height: 38px;
+    
     background-color: #8e8e8e; 
     border: 2px solid #555;
-    border-radius: 3px;
+    border-radius: 2px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: 0.1s;
-    position: relative; 
 }
 
 .item-slot:hover {
@@ -112,78 +122,99 @@ button:hover {
     border-color: #fff;
 }
 
+/* 3. Настройка картинки внутри ячейки */
 .item-slot img {
-    width: 60px; 
-    height: 60px;
-    image-rendering: pixelated; 
+    width: 32px; 
+    height: 32px;
+    
+    
+    /*image-rendering: pixelated; */
 }
 
 /* --- СТИЛИ ДЛЯ ВКЛАДОК --- */
 
 .tabs {
-    background-color: #333; /* Темный фон под вкладками */
-    padding: 10px 10px 0 10px;
+    background-color: #333; 
+    padding: 0;
     display: flex;
-    gap: 0; /* В Factorio вкладки часто слипшиеся, но можно поставить 2px */
+    gap: 0; 
     border-bottom: none;
+    
+    /* ДОБАВЛЯЕМ боковые границы, чтобы соединить верх и низ */
+    border-left: 2px solid #111;
+    border-right: 2px solid #111;
 }
 
 .tab-btn {
-    background-color: #2e2e2e; /* Темный фон неактивной вкладки */
-    border: 2px solid #111;    /* Черная обводка */
-    border-bottom: none;       /* Снизу границы нет */
+    background-color: #2e2e2e;
+    border: 2px solid #111;    
+    border-bottom: none;       
     
-    width: 64px;               /* Размер кнопки как в игре */
-    height: 64px;
-    padding: 5px;
+    /* Делаем вкладки шириной ровно 25% от панели (100px) */
+    width: 25%;  
+    height: 80px; /* Высота вкладки */
+    padding: 10px;
     
     cursor: pointer;
-    border-radius: 3px 3px 0 0; /* Закругляем верхние углы */
+    border-radius: 5px 5px 0 0; 
     transition: 0.1s;
-    
-    /* Центрируем картинку внутри кнопки */
     display: flex;
     justify-content: center;
     align-items: center;
+    box-sizing: border-box; /* Чтобы padding не ломал ширину */
 }
 
 /* Картинка внутри кнопки */
 .tab-btn img {
     width: 100%;
     height: 100%;
-    object-fit: contain;        /* Чтобы картинка не сплющилась */
-    image-rendering: pixelated; /* Пиксель-арт должен быть четким */
-    filter: brightness(0.7);    /* Чуть затемняем иконки неактивных вкладок */
+    object-fit: contain;
+    /*image-rendering: pixelated;*/
+    filter: brightness(0.6); 
 }
 
 .tab-btn:hover {
-    background-color: #ff9f1c; /* Оранжевая подсветка при наведении */
+    background-color: #ff9f1c; 
 }
 .tab-btn:hover img {
-    filter: brightness(1);     /* При наведении картинка яркая */
+    filter: brightness(1);     
 }
-
 /* АКТИВНАЯ ВКЛАДКА */
 .tab-btn.active {
-    background-color: #8e8e8e; /* Светло-серый фон (как на скрине) */
+    background-color: #8e8e8e; /* Светлый фон активной вкладки */
     border-color: #111;
-    position: relative;        /* Нужно, чтобы перекрыть линию снизу */
-    z-index: 2;
+    position: relative;
+    z-index: 2; /* Чтобы быть выше панели контента */
+    height: 85px; /* Чуть выше остальных, чтобы "торчала" */
+    margin-top: -5px; /* Поднимаем её */
 }
 
 .tab-btn.active img {
-    filter: brightness(1);     /* Активная иконка всегда яркая */
+    filter: brightness(1);     
 }
 
-/* Сетка инвентаря */
-.inventory-grid {
-    border: 2px solid #111;
-    border-top: 5px solid #8e8e8e; /* Верхняя граница цвета активной вкладки */
-    margin-top: 0 !important;
+/* --- ТЕЛО ПАНЕЛИ (Серый блок с контентом) --- */
+.panel-body {
     background-color: #3a3a3a;
+    border: 2px solid #111;
+    border-top: 5px solid #8e8e8e; 
+    padding: 10px;
     position: relative;
     z-index: 1;
+    min-height: 300px;
 }
+
+.window-header {
+    background-color: #333; /* Темный фон, такой же как за вкладками */
+    color: #ff9f1c;         /* Оранжевый текст Factorio */
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 15px;     /* Отступы */
+    border: 2px solid #111; /* Черная рамка */
+    border-bottom: none;    /* Снизу рамки нет, чтобы соединиться с вкладками */
+    text-align: center;       /* Текст слева, как обычно в окнах */
+}
+
 @keyframes fadeEffect {
     from {opacity: 0;}
     to {opacity: 1;}
