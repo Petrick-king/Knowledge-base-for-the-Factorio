@@ -215,6 +215,225 @@ button:hover {
     text-align: center;       /* Текст слева, как обычно в окнах */
 }
 
+/* --- СТИЛИ ЖИВОГО ПОИСКА --- */
+
+.search-wrapper {
+    position: relative; /* Чтобы выпадающий список позиционировался относительно этого блока */
+    width: 400px;       /* Ширина как у главного окна */
+    margin: 0 auto 20px auto; /* Отступ снизу */
+}
+
+/* Поле ввода */
+#search-input {
+    width: 100%;
+    padding: 12px;
+    background-color: #e0e0e0;
+    border: 2px solid #333;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
+}
+
+/* Выпадающий список (Контейнер) */
+.search-dropdown {
+    display: none; /* Скрыт по умолчанию */
+    position: absolute;
+    top: 100%;       /* Сразу под полем ввода */
+    left: 0;
+    width: 100%;
+    background-color: #2e2e2e;
+    border: 2px solid #ff9f1c; /* Оранжевая рамка */
+    border-radius: 0 0 5px 5px;
+    z-index: 1000;   /* Самый важный слой, поверх всего */
+    max-height: 300px;
+    overflow-y: auto; /* Скролл, если много результатов */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+/* Одна строка результата */
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    text-decoration: none;
+    color: #e0e0e0;
+    transition: 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: #3a3a3a;
+    border-left: 5px solid #ff9f1c; /* Эффект выделения слева */
+}
+
+/* Картинка в поиске */
+.result-icon {
+    width: 32px;
+    height: 32px;
+    margin-right: 15px;
+    border: 1px solid #555;
+    background: #8e8e8e;
+}
+
+/* Текст результата */
+.result-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.result-name {
+    font-weight: bold;
+    color: #ff9f1c;
+}
+
+.result-desc {
+    font-size: 12px;
+    color: #aaa;
+}
+
+.wiki-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background-color: #333; /* Темная шапка */
+    padding: 20px;
+    border: 2px solid #111;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.item-large-icon {
+    width: 64px;
+    height: 64px;
+    background-color: #8e8e8e;
+    /*border: 2px solid #fff;  Белая обводка для главного предмета */
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.item-large-icon img {
+    width: 56px;
+    height: 56px;
+    /*image-rendering: pixelated; */
+}
+
+.header-info h1 {
+    margin: 0 0 5px 0;
+    font-size: 28px;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.subtitle {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0;
+}
+
+.btn-edit {
+    margin-left: auto; /* Прижимает кнопку вправо */
+    background: #007acc; 
+    color: white; 
+    padding: 8px 15px; 
+    text-decoration: none; 
+    border: 1px solid #005f9e;
+    border-radius: 3px; 
+    font-weight: bold;
+}
+
+.wiki-panel {
+    background: #3a3a3a;
+    border: 2px solid #111;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.wiki-panel h3 {
+    color: #ff9f1c;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5px;
+    margin-top: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+    background: #2e2e2e;
+    padding: 10px;
+    border: 1px solid #444;
+}
+
+.stat-item {
+    font-size: 14px;
+}
+.stat-label { color: #aaa; font-weight: bold; }
+.stat-value { color: #fff; }
+
+.recipe-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.recipe-slot-wrapper {
+    position: relative; /* Чтобы цифра позиционировалась относительно слота */
+    width: 48px;
+    height: 48px;
+    background-color: #8e8e8e;
+    border: 2px solid #555;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: 0.1s;
+}
+
+.recipe-slot-wrapper:hover {
+    border-color: #ff9f1c;
+    background-color: #a0a0a0;
+}
+
+.recipe-slot-wrapper img {
+    width: 100%;
+    height: 100%;
+    padding: 4px; /* Отступ внутри */
+    box-sizing: border-box;
+    image-rendering: pixelated;
+}
+
+/* Цифра количества в углу */
+.amount-badge {
+    position: absolute;
+    bottom: 0px;
+    right: 2px;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; /* Черная обводка текста */
+    pointer-events: none; /* Чтобы клик проходил сквозь цифру */
+}
+
+/* Ссылка на всю площадь слота */
+.slot-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Теги машин */
+.machine-tag {
+    display: inline-block;
+    background: #444;
+    border: 1px solid #666;
+    padding: 3px 8px;
+    margin-right: 5px;
+    font-size: 13px;
+    color: #ddd;
+    border-radius: 2px;
+}
+
 @keyframes fadeEffect {
     from {opacity: 0;}
     to {opacity: 1;}

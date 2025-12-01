@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factorio Knowledge Base</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/Iron_gear_wheel.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
 </head>
 <body>
 
+    
     <div class="container">
         <!-- Шапка -->
         <div class="header-row">
@@ -16,13 +19,13 @@
         </div>
 
         <!-- Поиск -->
-        <form action="/" method="GET" class="search-form">
-            <input type="text" name="q" placeholder="Search item..." value="{{ request.args.get('q', '') }}">
-            <button type="submit">Search</button>
-            {% if request.args.get('q') %}
-                <a href="{{ url_for('index') }}" style="color: #aaa; margin-left: 10px;">Reset</a>
-            {% endif %}
-        </form>
+        <div class="search-wrapper">
+            <!-- autocomplete="off" чтобы браузер не перекрывал наш список своими подсказками -->
+            <input type="text" id="search-input" placeholder="Search item by name or description..." autocomplete="off">
+            
+            <!-- Сюда JavaScript будет вставлять результаты -->
+            <div id="search-results" class="search-dropdown"></div>
+        </div>
         <div class="main-panel">
 
             <div class="window-header">
@@ -118,6 +121,61 @@
         </div>
 
     </div>
+
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const resultsBox = document.getElementById('search-results');
+
+        // Слушаем каждое нажатие клавиши
+        searchInput.addEventListener('input', function() {
+            let query = this.value;
+
+            if (query.length < 2) { // Начинаем искать только от 2 букв
+                resultsBox.style.display = 'none';
+                return;
+            }
+
+            // Делаем запрос к нашему новому API
+            fetch(`/api/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Очищаем старые результаты
+                    resultsBox.innerHTML = '';
+
+                    if (data.length > 0) {
+                        resultsBox.style.display = 'block';
+                        
+                        // Создаем строчки для каждого найденного предмета
+                        data.forEach(item => {
+                            // Создаем ссылку
+                            let a = document.createElement('a');
+                            a.href = `/wiki/${item.id}`;
+                            a.className = 'search-result-item';
+                            
+                            // Вставляем HTML внутрь ссылки (Картинка + Текст)
+                            // Обрати внимание: путь к картинкам статический /static/images/
+                            a.innerHTML = `
+                                <img src="/static/images/${item.image}" class="result-icon">
+                                <div class="result-info">
+                                    <span class="result-name">${item.name}</span>
+                                    <span class="result-desc">${item.description}</span>
+                                </div>
+                            `;
+                            resultsBox.appendChild(a);
+                        });
+                    } else {
+                        resultsBox.style.display = 'none';
+                    }
+                });
+        });
+
+        // Скрываем список, если кликнули мимо
+        document.addEventListener('click', function(e) {
+            if (e.target !== searchInput && e.target !== resultsBox) {
+                resultsBox.style.display = 'none';
+            }
+        });
+    </script>
 
 
     <!-- JAVASCRIPT ДЛЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК -->

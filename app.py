@@ -1,7 +1,8 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename
 from models import db, Item, RecipeIngredient
+from sqlalchemy import or_
 
 app = Flask(__name__)
 
@@ -173,6 +174,124 @@ def wiki_page(item_id):
     item = Item.query.get_or_404(item_id)
     return render_template('item.html', item=item)
 
+@app.route('/api/search')
+def search_api():
+    query_text = request.args.get('q', '').strip()
+    
+    if not query_text:
+        return jsonify([])
+
+    words = query_text.split()
+    
+    # 1. Формируем запрос (как и раньше)
+    search_query = Item.query
+    for word in words:
+        pattern = f"%{word}%"
+        search_query = search_query.filter(
+            or_(
+                Item.name.ilike(pattern),
+                Item.internal_name.ilike(pattern),
+                Item.description.ilike(pattern),
+                Item.prototype_type.ilike(pattern)
+            )
+        )
+    
+    # 2. Получаем побольше результатов (например 50), чтобы было что сортировать
+    # Если мы возьмем мало (limit 5), может получиться так, что база вернет 5 предметов по описанию,
+    # а предмет с нужным именем был бы 6-м и не попал в выборку.
+    results = search_query.limit(50).all()
+
+    # 3. УМНАЯ СОРТИРОВКА (Python)
+    # Мы присваиваем каждому предмету "вес" (приоритет). Чем меньше число, тем выше предмет.
+    def get_priority(item):
+        name_lower = item.name.lower()
+        q_lower = query_text.lower()
+        
+        # Приоритет 0: Полное совпадение фразы в начале названия (Идеально)
+        if name_lower.startswith(q_lower):
+            return 0
+        
+        # Приоритет 1: Полное совпадение фразы где-то в названии
+        if q_lower in name_lower:
+            return 1
+            
+        # Приоритет 2: Все слова запроса есть в названии (в любом порядке)
+        # Например: ищем "plate iron", а предмет "Iron plate"
+        all_words_in_name = all(w.lower() in name_lower for w in words)
+        if all_words_in_name:
+            return 2
+            
+        # Приоритет 3: Хотя бы одно слово есть в названии
+        any_word_in_name = any(w.lower() in name_lower for w in words)
+        if any_word_in_name:
+            return 3
+            
+        # Приоритет 4: Совпадение только в описании/категории (самый низ)
+        return 4
+
+    # Сортируем список results, используя нашу функцию приоритета
+    results.sort(key=get_priority)
+
+    # 4. Теперь берем только топ-10 или топ-20 лучших
+    final_results = results[:15]
+
+    # 5. Упаковываем в JSON
+    data = []
+    for item in final_results:
+        short_desc = (item.description[:100] + '...') if item.description and len(item.description) > 100 else (item.description or '')
+        
+        data.append({
+            'id': item.id,
+            'name': item.name,
+            'image': item.image_filename,
+            'description': short_desc
+        })
+    
+    return jsonify(data)
+    query_text = request.args.get('q', '').strip()
+    
+    if not query_text:
+        return jsonify([])
+
+    # 1. Разбиваем запрос пользователя на отдельные слова
+    # "iron plate" -> ["iron", "plate"]
+    words = query_text.split()
+
+    # Начинаем формировать запрос к базе
+    search_query = Item.query
+
+    # 2. Магия: Проходим по КАЖДОМУ слову и добавляем фильтр
+    for word in words:
+        pattern = f"%{word}%" # %слово%
+        
+        # Слово должно быть ХОТЯ БЫ В ОДНОМ из этих полей:
+        search_query = search_query.filter(
+            or_(
+                Item.name.ilike(pattern),           # В названии
+                Item.internal_name.ilike(pattern),  # Во внутреннем ID
+                Item.description.ilike(pattern),    # В описании
+                Item.prototype_type.ilike(pattern),       # В категории
+                Item.prototype_type.ilike(pattern)  # В типе
+            )
+        )
+    
+    # 3. Получаем результаты (максимум 20, чтобы список не был бесконечным)
+    results = search_query.limit(20).all()
+
+    # 4. Превращаем в JSON
+    data = []
+    for item in results:
+        # Для описания берем первые 100 символов, чтобы не забивать поиск текстом
+        short_desc = (item.description[:100] + '...') if item.description and len(item.description) > 100 else (item.description or '')
+        
+        data.append({
+            'id': item.id,
+            'name': item.name,
+            'image': item.image_filename,
+            'description': short_desc
+        })
+    
+    return jsonify(data)
 
 # --- 3. ЗАПУСК (RUN) ---
 if __name__ == '__main__':
